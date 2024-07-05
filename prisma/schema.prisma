@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement()) //첫번째 사용자는 1 아이디, 2.. 3..
+  username String @unique // 고유값
+  email String? @unique //이메일은 필수가아님 전화번호도 있으니까
+  password String? // ..
+  phone String? @unique
+  github_id String? @unique
+  avatar String? @default("http://img") //사용자 생성될때 기본 이미지
+  created_at DateTime @default(now()) // 사용자가 생성될때의 그 시간
+  updated_at DateTime @updatedAt
+  SMSToken SMSToken[]
+} // table =model 카테고리처럼 내 디비안에있는 객체
+
+model SMSToken {
+  id Int @id @default(autoincrement())
+  token String @unique
+  created_at DateTime @default(now()) // 사용자가 생성될때의 그 시간
+  updated_at DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade) //관계를 보여준다 userid라는 필드가 user모델의 Id를 참조한다.
+  userId Int //이것만 디비에 저장
+}
+
