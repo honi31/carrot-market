@@ -2,7 +2,7 @@ import db from "@/lib/db";
 import sessionLogin from "@/lib/login";
 import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
-
+import checkUserName from "@/lib/checkUserName";
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
   if (!code) {
@@ -51,9 +51,10 @@ export async function GET(request: NextRequest) {
     await sessionLogin(user.id);
     return redirect("/profile");
   }
+  const checkName = await checkUserName(login);
   const newUser = await db.user.create({
     data: {
-      username: login,
+      username: checkName ? `${login}-gh` : login,
       github_id: id + "",
       avatar: avatar_url,
     },
@@ -61,6 +62,7 @@ export async function GET(request: NextRequest) {
       id: true,
     },
   });
+
   await sessionLogin(newUser.id);
   return redirect("/profile");
 }
