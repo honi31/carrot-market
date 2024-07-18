@@ -19,7 +19,6 @@ export default function SMSLogin() {
         <h2 className="text-xl">Verify Your Phone Number</h2>
       </div>
       <form action={action} className="flex flex-col gap-3">
-        <Input name="phone" type="text" placeholder="Phone number" required />
         {state.token ? (
           <Input
             name="token"
